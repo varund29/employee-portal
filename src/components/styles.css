@@ -3941,6 +3941,7 @@ textarea.form-control-lg {
   text-decoration: none;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }
+
 @media (prefers-reduced-motion: reduce) {
   .nav-link {
     transition: none;
@@ -11314,4 +11315,36 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
   body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
     margin-left: -15rem;
   }
+}
+
+
+/* Dashboard */
+
+.float-container {
+  border: 3px solid #fff;
+  padding: 20px;
+}
+
+.float-child {
+  width: 250px;
+  float: left;
+  padding: 20px;
+  border: 2px solid darkgray;
+  height: 233px;
+  margin-right: 50px;
+  border-radius: 11px;
+  align-items: flex-start;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+} 
+
+.cd-center{
+  margin: auto;
+  width: 50%;
+  font-weight: bolder;
+  font-size: 130px;
+  line-height: 140px;
+} 
+
+.c-pointer{
+  cursor: pointer !important;
 }

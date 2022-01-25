@@ -2,14 +2,31 @@ import React, { useState } from "react";
 import { Form } from "antd";
 import "./Login.css";
 import { useNavigate, Redirect } from "react-router-dom";
-
+import ApiService from "../../Services/ApiService";
 function Login() {
+  localStorage.setItem("isLoggedIn", false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   let message = "";
   const onFormSubmit = (values) => {
-    console.log(values);
-    const formData = new FormData();
+    let cdata = ApiService.getCredentials();
+    console.log(cdata);
+    localStorage.setItem("isLoggedIn", false);
+    localStorage.setItem("user", null);
+    if (
+      values.username == cdata.username &&
+      values.password == cdata.password
+    ) {
+      localStorage.setItem("user", cdata.username);
+      localStorage.setItem("isLoggedIn", true);
+      console.log("Login successfully");
+      //navigate("/home");
+      window.location = "home";
+    } else {
+      setError("Invalid Username/Password");
+    }
+    /* 
+     const formData = new FormData();
     formData.append("username", values.username);
     formData.append("password", values.password);
 
@@ -17,9 +34,8 @@ function Login() {
       method: "POST",
       body: formData,
     };
-
     try {
-      fetch("https://emp-portal.free.beeceptor.com/my/api/path", options)
+      fetch("./credentials.json", options)
         .then(function (res) {
           return res.json();
         })
@@ -35,7 +51,7 @@ function Login() {
             setError("Invalid Username/Password");
           }
         });
-    } catch {}
+    } catch {} */
   };
   return (
     <div className="wrapper fadeInDown">

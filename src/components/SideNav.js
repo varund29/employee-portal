@@ -1,49 +1,33 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 
 class SideNav extends Component {
   render() {
     return (
       <div className="border-end bg-white" id="sidebar-wrapper">
         <div className="sidebar-heading border-bottom bg-light">
-          Employee Portal
+          Company Portal
         </div>
         <div className="list-group list-group-flush">
-          <a
+          <Link
+            to="/home/dashboard"
             className="list-group-item list-group-item-action list-group-item-light p-3"
-            href="#!"
           >
             Dashboard
-          </a>
-          <a
+          </Link>
+
+          <Link
+            to="/home/employee"
             className="list-group-item list-group-item-action list-group-item-light p-3"
-            href="#!"
           >
-            Shortcuts
-          </a>
-          <a
+            Employees
+          </Link>
+          <Link
+            to="/home/department"
             className="list-group-item list-group-item-action list-group-item-light p-3"
-            href="#!"
           >
-            Overview
-          </a>
-          <a
-            className="list-group-item list-group-item-action list-group-item-light p-3"
-            href="#!"
-          >
-            Events
-          </a>
-          <a
-            className="list-group-item list-group-item-action list-group-item-light p-3"
-            href="#!"
-          >
-            Profile
-          </a>
-          <a
-            className="list-group-item list-group-item-action list-group-item-light p-3"
-            href="#!"
-          >
-            Status
-          </a>
+            Departments
+          </Link>
         </div>
       </div>
     );
