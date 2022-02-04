@@ -5,6 +5,7 @@ import Header from "./Header";
 import EmployeeDetails from "../Pages/EmployeeDetails";
 import DepartmentDetails from "../Pages/DepartmentDetails";
 import Dashboard from "../Pages/Dashboard";
+import Movies from "../Pages/Movies";
 import "./styles.css";
 import Login from "../Pages/Login/Login";
 
@@ -25,6 +26,8 @@ class Home extends Component {
         return <EmployeeDetails />;
       case "department":
         return <DepartmentDetails />;
+      case "movies":
+        return <Movies />;
       default:
         return <Dashboard />;
     }

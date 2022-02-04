@@ -1,6 +1,7 @@
 import emp from "./emp.json";
 import dept from "./dept.json";
 import credentials from "./credentials.json";
+import movies from "./movies.json";
 
 const ApiService = {
   getEmployees: () => {
@@ -20,6 +21,9 @@ const ApiService = {
   },
   getCredentials: () => {
     return credentials;
+  },
+  getMovies: () => {
+    return movies ? movies : [];
   },
 };
 

@@ -28,6 +28,12 @@ class SideNav extends Component {
           >
             Departments
           </Link>
+          <Link
+            to="/home/movies"
+            className="list-group-item list-group-item-action list-group-item-light p-3"
+          >
+            Movies
+          </Link>
         </div>
       </div>
     );
