@@ -1,0 +1,562 @@
+<main>
+    <!--  <div class="rooms-header row align-items-center assets-header" *ngIf="!sharedService.isMobileView">
+
+        <div class="col-6 search-bar">
+            <div class="row no-gutters align-items-center">
+                <div class="col">
+                    <input matInput [(ngModel)]="searchKey" class="form-control fnt-sz rounded-pill pr-5" autocomplete="off"
+                        (keyup)="applyRoomFilter()">
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-border-0 rounded-pill ml-n5" type="button">
+                        <i class="fa fa-search fa-2x"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    <div style="display: grid; grid-template-columns: 30% 15% 48% 7%" *ngIf="!sharedService.isMobileView">
+        <div style="display: flex">
+            <div style="display: flex" *ngIf="enableInvokeAction">
+                <div class="progress-icon async-icons clr-progress" style="margin-top: 9px;"
+                    (click)="showProgressList()" *ngIf="!haveProgress">
+                    <i class="fas fa-tasks"></i></div>
+                <div class="progress-icon" style="margin-right: 8px;margin-top: 6px;" (click)="showProgressList()"
+                    *ngIf="haveProgress"><img src="assets/img/progress-small.gif" alt="Progress" /></div>           
+                <div style="cursor: pointer;margin: 10px;">
+                    <div class="error-exclam async-icons" (click)="showErrorList()" *ngIf="haveErrors"><i
+                            class="fas fa-exclamation-circle"></i></div>
+                </div>
+        </div>
+        <div *ngIf="enableInvokeAction">
+            <button [matTooltipPosition]="sharedService.positionOptions[5]" [ngClass]="!sameTypeOfAseets?'disabled':''" (click)="tirggerAction()"
+            matTooltipClass="bg-tooltip" [matTooltip]="sameTypeOfAseets?actionFilterSelacted?.name : 'To trigger this action, please select assets of same type.'"
+            *ngIf="selection.selected.length>0 && actionFilterSelacted" class="btn btn-primary btn-create">Trigger "{{actionFilterSelacted?.name}}"</button></div>
+        </div>        
+        <div></div>
+            
+            <div style="display: flex;justify-content: right;">
+                <ng-container *ngIf="enableInvokeAction">
+                    <div class="float-left sortby">
+                        Filter by </div>
+                    <div class="float-left" style="width: 200px;margin-right: 20px;">
+                        <div class="dropdown" style="width: 100%;background-color:#fff">
+                            <button class="btn text-left" style="font-size: 14px;width: 100%;" type="button"
+                                data-toggle="dropdown">
+                                {{(actionFilterSelacted==null)?'Action':actionFilterSelacted?.name}}
+                                <i  class="sort-icon-lbl"  [ngClass]="actionFilterSelacted==null?'far fa-filter':'fas fa-filter'"></i>
+                            </button>
+    
+                            <ul class="dropdown-menu" style="width:300px;">
+                                <li class="sort-item" *ngFor="let item of actionFilter;let in = index" [value]="item"
+                                    (click)="applyFilterByAction(item);" [ngClass]="item.name==actionFilterSelacted?.name?'ddl-selected':''">
+                                    <a>{{item.name}}</a>                               
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </ng-container>
+                <div class="float-right sortby">
+                    Sort by </div>
+                <div class="float-right" style="width: 200px;margin-right: 20px;">
+                    <div class="dropdown" style="width: 100%;background-color:#fff">
+                        <button class="btn text-left" style="font-size: 14px;width: 100%;" type="button"
+                            data-toggle="dropdown">
+                            {{sortColumn.header}}
+                            <i *ngIf="!sortColumn.sort && sortColumn.columnDef!='*'"
+                                class="far fa-sort-amount-down-alt sort-icon-lbl"></i>
+                            <i *ngIf="sortColumn.sort && sortColumn.columnDef!='*'"
+                                class="far fa-sort-amount-up sort-icon-lbl"></i>
+                        </button>
+
+                        <ul class="dropdown-menu" style="width:235px;">
+                            <li class="sort-item" *ngFor="let item of columns;let in = index" [value]="item.header"
+                                [hidden]="!item.show" (click)="applySortByColumn(item,item.sort?'asc':'desc');"
+                                [ngClass]="item.header==sortColumn?.header?'ddl-selected':''">
+                                <a>{{item.header}}
+                                </a>
+                                <i *ngIf="!item.sort" class="far fa-sort-amount-down-alt sort-icon"></i>
+                                <i *ngIf="item.sort" class="far fa-sort-amount-up sort-icon"></i>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+      
+        <div style="padding-left: 0px;text-align: right;">
+            <span style="font-weight: 500; cursor: pointer;" (click)="showPopupCustomise()">Customise <i
+                    style="font-weight:600" class="far fa-chevron-right"></i></span>
+        </div>
+    </div>
+    <!-- Assets-->
+    <div class="row" [hidden]="sharedService.isMobileView">
+        <div class="card-body">
+            <div class="hotlist-table">
+                <div class="table-responsive-sm">
+                    <mat-table [dataSource]="assetDataSource" class="table bages" id="assets-table" matSort>
+                        <ng-container matColumnDef="select">
+                            <mat-header-cell *matHeaderCellDef style="flex: 0 0 3%;margin-left: 0px !important;
+                            margin-right: 10px !important;">
+                                <mat-checkbox (change)="$event ? masterRoomToggle() : null"
+                                [checked]="selection.hasValue() && isAllRoomSelected()" *ngIf="actionFilterSelacted"> 
+                              </mat-checkbox>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row" style="flex: 0 0 4%;margin-left: 0px !important;">
+                                <mat-checkbox (click)="$event.stopPropagation()" *ngIf="actionFilterSelacted"
+                                    (change)="$event ? onCheckBoxChecked(row) : null"
+                                    [checked]="selection.isSelected(row)">
+                                </mat-checkbox>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="room_name">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'room_name'"
+                                [matTooltipPosition]="sharedService.positionOptions[2]" matTooltipClass="bg-tooltip"
+                                [matTooltip]="columns | ColumnName:'room_name'" [hidden]="!showColumns['room_name']"
+                                *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['room_name']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'room_name'"
+                                        (keyup)="applyFilterByColumn($event,'room_name');disabledHeader=true"
+                                        [ngClass]="models['room_name']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['room_name']" *matCellDef="let row"
+                                [innerHtml]="row.room_name">
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="name">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'name'"
+                                [hidden]="!showColumns['name']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['name']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'name'"
+                                        (keyup)="applyFilterByColumn($event,'name');disabledHeader=true"
+                                        [ngClass]="models['name']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['name']" *matCellDef="let row" [innerHtml]="row.name">
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="category">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'category'"
+                                [hidden]="!showColumns['category']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['category']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'category'"
+                                        (keyup)="applyFilterByColumn($event,'category');disabledHeader=true"
+                                        [ngClass]="models['category']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['category']" *matCellDef="let row"
+                                [innerHtml]="row.category | PreferredValue">
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="brand">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'brand'"
+                                [hidden]="!showColumns['brand']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['brand']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'brand'"
+                                        (keyup)="applyFilterByColumn($event,'brand');disabledHeader=true"
+                                        [ngClass]="models['brand']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['brand']" *matCellDef="let row"
+                                [innerHtml]="row.brand | PreferredValue"></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="model">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'model'"
+                                [hidden]="!showColumns['model']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['model']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'model'"
+                                        (keyup)="applyFilterByColumn($event,'model');disabledHeader=true"
+                                        [ngClass]="models['model']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['model']" *matCellDef="let row"
+                                [title]="row.model | PreferredValue">
+                                <div class="text-ellipsis" [innerHtml]="row.model | PreferredValue"></div>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="hostname">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'hostname'"
+                                [hidden]="!showColumns['hostname']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['hostname']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'hostname'"
+                                        (keyup)="applyFilterByColumn($event,'hostname');disabledHeader=true"
+                                        [ngClass]="models['hostname']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['hostname']" *matCellDef="let row"
+                                [title]="row.hostname | PreferredValue">
+                                <div class="text-ellipsis" [innerHtml]="row.hostname | PreferredValue"></div>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="ip_address">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'ip_address'"
+                                [hidden]="!showColumns['ip_address']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['ip_address']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'ip_address'"
+                                        (keyup)="applyFilterByColumn($event,'ip_address');disabledHeader=true"
+                                        [ngClass]="models['ip_address']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['ip_address']" *matCellDef="let row"
+                                [title]="row.ip_address | PreferredValue">
+                                <div class="text-ellipsis" [innerHtml]="row.ip_address | PreferredValue"></div>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="ip_port">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'ip_port'"
+                                [hidden]="!showColumns['ip_port']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['ip_port']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'ip_port'"
+                                        (keyup)="applyFilterByColumn($event,'ip_port');disabledHeader=true"
+                                        [ngClass]="models['ip_port']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['ip_port']" *matCellDef="let row"
+                                [innerHtml]="row.ip_port | PreferredValue"></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="mac_address">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'mac_address'"
+                                [hidden]="!showColumns['mac_address']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['mac_address']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'mac_address'"
+                                        (keyup)="applyFilterByColumn($event,'mac_address');disabledHeader=true"
+                                        [ngClass]="models['mac_address']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['mac_address']" *matCellDef="let row"
+                                [title]="row.mac_address | PreferredValue">
+                                <div class="text-ellipsis" [innerHtml]="row.mac_address | PreferredValue"></div>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="serial_number">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'serial_number'"
+                                [hidden]="!showColumns['serial_number']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['serial_number']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'serial_number'"
+                                        (keyup)="applyFilterByColumn($event,'serial_number');disabledHeader=true"
+                                        [ngClass]="models['serial_number']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['serial_number']" *matCellDef="let row"
+                                [title]="row.serial_number | PreferredValue">
+                                <div class="text-ellipsis" [innerHtml]="row.serial_number | PreferredValue"></div>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="firmware">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'firmware'"
+                                [hidden]="!showColumns['firmware']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['firmware']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'firmware'"
+                                        (keyup)="applyFilterByColumn($event,'firmware');disabledHeader=true"
+                                        [ngClass]="models['firmware']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['firmware']" *matCellDef="let row"
+                                [innerHtml]="row.firmware | PreferredValue"></mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="middleware">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'middleware'"
+                                [hidden]="!showColumns['middleware']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['middleware']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'middleware'"
+                                        (keyup)="applyFilterByColumn($event,'middleware');disabledHeader=true"
+                                        [ngClass]="models['middleware']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['middleware']" *matCellDef="let row"
+                                [title]="row.middleware | PreferredValue">
+                                <div class="text-ellipsis" [innerHtml]="row.middleware | PreferredValue"></div>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="asset_tag">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'asset_tag'"
+                                [hidden]="!showColumns['asset_tag']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['asset_tag']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'asset_tag'"
+                                        (keyup)="applyFilterByColumn($event,'asset_tag');disabledHeader=true"
+                                        [ngClass]="models['asset_tag']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['asset_tag']" *matCellDef="let row"
+                                [title]="row.asset_tag | PreferredValue">
+                                <div class="text-ellipsis" [innerHtml]="row.asset_tag | PreferredValue"></div>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="switch_port">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'switch_port'"
+                                [hidden]="!showColumns['switch_port']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['switch_port']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'switch_port'"
+                                        (keyup)="applyFilterByColumn($event,'switch_port');disabledHeader=true"
+                                        [ngClass]="models['switch_port']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['switch_port']" *matCellDef="let row"
+                                [title]="row.switch_port | PreferredValue">
+                                <div class="text-ellipsis" [innerHtml]="row.switch_port | PreferredValue"></div>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="field_port">
+                            <mat-header-cell [matTooltipPosition]="sharedService.positionOptions[2]"
+                                matTooltipClass="bg-tooltip" [matTooltip]="columns | ColumnName:'field_port'"
+                                [hidden]="!showColumns['field_port']" *matHeaderCellDef class='dp-block'>
+                                <div>
+                                    <input [(ngModel)]="models['field_port']" class="form-control fnt-sz" type="text"
+                                        (focus)="disabledHeader=true" (focusout)="disabledHeader=false"
+                                        [placeholder]="columns | ColumnName:'field_port'"
+                                        (keyup)="applyFilterByColumn($event,'field_port');disabledHeader=true"
+                                        [ngClass]="models['field_port']?'txtbx-on-val':''" />
+                                </div>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['field_port']" *matCellDef="let row"
+                                [title]="row.field_port | PreferredValue">
+                                <div class="text-ellipsis" [innerHtml]="row.field_port | PreferredValue"></div>
+                            </mat-cell>
+                        </ng-container>	
+                        <ng-container matColumnDef="power_status">
+                            <mat-header-cell style="flex: 0 0 3%;"
+                                [matTooltipPosition]="sharedService.positionOptions[2]" matTooltipClass="bg-tooltip"
+                                [matTooltip]="columns | ColumnName:'power_status'"
+                                [hidden]="!showColumns['power_status']" *matHeaderCellDef class='dp-block'>
+                            </mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['power_status']" *matCellDef="let row"
+                                style="flex: 0 0 3%;justify-content: end;">
+                                <span [innerHTML]="row.power_status!=='NA'?row.power_status:''"
+                                    [ngClass]="row.power_status=='ON'?'badge badge-pill badge-success': row.power_status=='OFF'?'badge badge-pill badge-amber':''">
+                                </span>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="state">
+                            <mat-header-cell style="flex: 0 0 5%;"
+                                [matTooltipPosition]="sharedService.positionOptions[2]" matTooltipClass="bg-tooltip"
+                                [matTooltip]="columns | ColumnName:'state'" [hidden]="!showColumns['state']"
+                                *matHeaderCellDef class='dp-block'></mat-header-cell>
+                            <mat-cell [hidden]="!showColumns['state']" *matCellDef="let row"
+                                style="justify-content: end;flex: 0 0 5%;">
+                                <span
+                                    [ngClass]="row.state=='Online'?'badge badge-pill badge-success': row.state=='Offline'?'badge badge-pill badge-danger':''">
+                                    {{row.state}}</span>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="asset-actions">
+                            <mat-header-cell *matHeaderCellDef style="flex: 0 0 2%;"></mat-header-cell>
+                            <mat-cell *matCellDef="let row"
+                                style="flex: 0 0 2%;cursor: pointer;justify-content: center;">
+                                <div class="dropdown-div-clm-actions" style="padding-top: 0px;padding-bottom: 0px;">
+                                    <i style="font-size: large;" class="far fa-ellipsis-v"></i>
+                                    <div class="dropdown-div-clm-actions-content" style="right: 60px;">
+                                        <a style="cursor: pointer;" class="on-action {{item.key}}"
+                                            *ngFor="let item of optionMenu" [hidden]="!item.showOption"
+                                            (click)="onOptionItemClick(row,item.key)">{{item.value}}</a>
+                                        <ng-container *ngIf="enableInvokeAction">
+                                            <a style="cursor: pointer;" class="on-action"
+                                                *ngFor="let act of row.actions;let i=index;"
+                                                (click)="onInvokeItemClick(row,act,'invoke-action')">{{act.name}}</a>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row *matHeaderRowDef="displayedColumns" style="padding-left: 0px !important;">
+                        </mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"
+                            style="cursor: pointer;padding-left: 0px !important;" class="asset-row"
+                            (click)="onClickOnRow(row,'asset-row')"></mat-row>
+                    </mat-table>
+                    <div *ngIf="assetDataSource?.data.length === 0" id="room-list"
+                        style="height:300px;width: 100%;display:flex; justify-content: center;align-items: center;color: var(--text-placeholer);">
+                        <p>No Assets found.</p>
+                        <style>
+                            .my-table {
+                                min-height: 0vh !important;
+                            }
+                        </style>
+                    </div>
+                    <div class="mat-table-footer" style="grid-template-columns: 10% 88% 2%;">
+                        <div style="text-align: center;"> <a class="clear-comp-task fnt-sz" *ngIf="clearSearchbtn"
+                                (click)="clearSearchAndFilter()">Clear Search</a></div>
+                        <div>
+                            <mat-paginator (click)="onPaginateChange($event)" #assetPager
+                                [pageSizeOptions]="[5, 10, 25, 100]" [pageSize]="pagesize" showFirstLastButtons>
+                            </mat-paginator>
+                        </div>
+                        <div>
+                            <i *ngIf="assetDataSource?.data.length !== 0" class="far fa-arrow-to-bottom download-icon"
+                                aria-hidden="true" (click)="downloadCSVFile('assets')"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Assets end--->
+
+    <!-- Mobile-->
+    <div *ngIf="sharedService.isMobileView">
+        <div class="row">
+            <div class="col-12" style="text-align: right;">
+                <div class="search-container">
+                    <input id="search-box" class="search-box" type="text" placeholder="Search" [(ngModel)]="searchKey"
+                        (keyup)="applyAssetFilter()" (focus)="expandSearch=true" (focusout)="expandSearch=false" />
+                    <label for="search-box"><i class="fas fa-search search-icon"></i></label>
+                    <!-- <input type="submit" id="search-submit" /> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="accordion" class="mt-5" [hidden]="!sharedService.isMobileView">
+        <div class="question" [ngClass]="activeCls[i]?'active':''"
+            *ngFor="let asset of assetDataSource?.filteredData;let i=index;">
+            <header (click)="prev=activeCls[i]; activeCls.fill(false); activeCls[i]=!prev;">
+                <i class="fas fa-chevron-down"></i>
+                <div class="mob-card-title"> {{asset?.room_name}}<span style="margin: 5px;"
+                        *ngIf="asset?.room_name && asset?.name">•</span> {{asset?.name}}</div>
+            </header>
+            <main *ngIf="activeCls[i]" class="main-expnd">
+                <div class="room-lists">
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.id">
+                        <div class="title">ID</div>
+                        <div [innerHTML]="asset.id | PreferredValue"></div>
+                    </div>
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.category">
+                        <div class="title">Category</div>
+                        <div [innerHTML]="asset.category | PreferredValue"></div>
+                    </div>
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.brand">
+                        <div class="title">Brand</div>
+                        <div [innerHTML]="asset.brand | PreferredValue"></div>
+                    </div>
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.model">
+                        <div class="title">Model</div>
+                        <div [innerHTML]="asset.model | PreferredValue"></div>
+                    </div>
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.ip_address">
+                        <div class="title">Ip Address</div>
+                        <div [innerHTML]="asset.ip_address | PreferredValue"></div>
+                    </div>
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.ip_port">
+                        <div class="title">Ip Port</div>
+                        <div [innerHTML]="asset.ip_port | PreferredValue"></div>
+                    </div>
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.mac_address">
+                        <div class="title">Mac Address</div>
+                        <div [innerHTML]="asset.mac_address | PreferredValue"></div>
+                    </div>
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.serial_number">
+                        <div class="title">Serial</div>
+                        <div [innerHTML]="asset.serial_number | PreferredValue"></div>
+                    </div>
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.firmware">
+                        <div class="title">Firmware</div>
+                        <div [innerHTML]="asset.firmware | PreferredValue"></div>
+                    </div>
+                    <div class="room-list mob-asset room-list-mob" *ngIf="asset.state">
+                        <div class="title">Communicating</div>
+                        <div>
+                            <span [innerHTML]="asset.state"
+                                [ngClass]="asset.state=='Online'?'badge badge-pill badge-success': asset.state=='Offline'?'badge badge-pill badge-danger':''"></span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!---Mobile End-->
+</main>
+<app-select-columns [columns]="columns" (updateColumns)="updateColumns($event)"></app-select-columns>
+
+<app-asset-details [asset]="selectedAsset" [optionMenu]="optionMenu" (editAsset)="editAsset($event)"
+    (showActionSelection)="showActionSelectionPerAsset($event)" (showAssetLivestatus)="showAssetLivestatus($event)">
+</app-asset-details>
+<app-edit-asset [asset]="selectedAsset" (editAsset)="updateAssets($event)"></app-edit-asset>
+
+<app-asset-action-selection [isMultipleAssets]="showOptionsMenu" [assets]="selection.selected" [asset]="selectedAsset"
+    (invokeAction)="invokeAction($event)">
+</app-asset-action-selection>
+<app-asset-action-parameters (invokeAction)="invokeActionWithParameter($event)"></app-asset-action-parameters>
+
+<app-mtr-details></app-mtr-details>
+<app-zoom-room-details></app-zoom-room-details>
+<app-asset-livestatus></app-asset-livestatus>
+
+
+<app-error-notification (onLiveStatusChange)="onLiveStatusChange($event)"></app-error-notification>
+<app-progress-notification (onLiveStatusChange)="onLiveStatusChange($event)"></app-progress-notification>
+
+
+<app-common-confirm modelId="action-cofirm" [headerText]="" btnLeftColor="btn-cancel" [bodyText1Clr]="confirmTxtClr" [bodyText1]="confirmTxt"
+    bodyText3="Are you sure?" btnLeftText="CANCEL" btnRightText="TRIGGER" (btnLeftEvent)="cancelInvokeAction($event)"
+    (btnRightEvent)="invokeActionConfirmCallback($event)"></app-common-confirm>
+
+
+<!--Start: Zoom Room Actions-->
+<app-common-confirm modelId="restart-zoom-room" [headerText]="" btnRightColor="btn-cancel"  bodyText1="This will restart the Zoom Room appliance."
+bodyText3="Are you sure?" btnLeftText="YES" btnRightText="NO" (btnLeftEvent)="restartZoomRoom($event)"
+(btnRightEvent)="cancelRestart($event)"></app-common-confirm>
+
+<app-update-app-version *ngIf="showUpdateZoomAppVersion" [appType]="zoomAppType" [appVersionTitle]="zoomAppVersionTitle" [zoomDevice]="selectedZoomDevice"
+    (updateAppVersionEvent)="updateAppVersion($event)"></app-update-app-version>
+
+<app-update-device-settings *ngIf="showUpdateZoomDeviceSettings" [zoomDeviceSetings]="zoomDeviceSetings" [selectedDeviceSetings]="selectedZoomDeviceSetings"
+    (updateDeviceSettingsEvent)="updateDeviceSettings($event)"></app-update-device-settings>
+
+<!--End: Zoom Room Actions-->
+
+<!--Start: MTR Actions-->
+<app-common-confirm modelId="restart-mtr-room" [headerText]="" btnRightColor="btn-cancel"
+    bodyText1="This will restart the Microsoft Teams Room appliance." bodyText3="Are you sure?" btnLeftText="YES"
+    btnRightText="NO" (btnLeftEvent)="restartMtrRoom($event)" (btnRightEvent)="cancelMTRRestart($event)">
+</app-common-confirm>
+
+<app-common-confirm modelId="mtr-run-diagnostics" [headerText]="" btnRightColor="btn-cancel"
+    bodyText1="This will run diagnostics on the Microsoft Teams Room." bodyText3="Are you sure?" btnLeftText="YES"
+    btnRightText="NO" (btnLeftEvent)="runMTRDiagnostics($event)" (btnRightEvent)="cancelMTRDiagnostics($event)">
+</app-common-confirm>
+
+<app-mtr-update-software-version *ngIf="showMTRUpdateSoftware" [versions]="mtrSoftwareVersions" [selectedversion]="currentMTRSoftwareVersion"
+    [title]="mtrModalTitle" (updateSoftwareVersionEvent)="updateMTRSoftwareVersion($event)">
+</app-mtr-update-software-version>
+<!-- End: MTR Actions-->
