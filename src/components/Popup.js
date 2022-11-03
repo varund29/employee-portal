@@ -5,7 +5,7 @@ function onSave(movie) {
 }
 
 function Popup(props) {
-  console.log(props.movie);
+
   let id = "model-" + props.movie.id;
   return (
     <div className="modal" tabIndex="-1" id={id}>

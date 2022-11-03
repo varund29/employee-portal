@@ -39,14 +39,13 @@ const columns = [
     cell: (row) => (
       <div className="data-table-re">
         <div className="openbtn text-center">
-          <button
+          <a
             type="button"
-            className="btn btn-primary"
             data-bs-toggle="modal"
             data-bs-target={"#model-" + row.id}
           >
-            Open modal
-          </button>
+            view
+          </a>
           <Popup movie={row} />
         </div>
       </div>
@@ -142,24 +141,28 @@ const BootyCheckbox = React.forwardRef(({ onClick, ...rest }, ref) => (
 function Movies() {
   const [movies, setData] = useState([]);
   useEffect(() => {
-    console.log(ApiService.getMovies());
-    setData(ApiService.getMovies());
+    ApiService.getMovies()
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   return (
-    <div className="App">
-      <div className="card">
-        <DataTable
-          title="Movies"
-          columns={columns}
-          data={movies}
-          defaultSortFieldID={1}
-          pagination
-          paginationComponent={BootyPagination}
-          selectableRows
-          selectableRowsComponent={BootyCheckbox}
-        />
-      </div>
+    <div className="container-fluid">
+      <h3 className="mt-4 bg-light-theme-txt">Others</h3>
+
+      <DataTable
+        columns={columns}
+        data={movies}
+        defaultSortFieldID={1}
+        pagination
+        paginationComponent={BootyPagination}
+        selectableRows
+        selectableRowsComponent={BootyCheckbox}
+      />
     </div>
   );
 }

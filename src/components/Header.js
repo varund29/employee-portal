@@ -1,14 +1,14 @@
 function logout() {
-  console.log("logout");
   localStorage.setItem("isLoggedIn", false);
   localStorage.setItem("user", null);
   window.location = "";
 }
-function Header() {
-  let user = localStorage.getItem("user");
 
+
+function Header(props) {
+  let user = localStorage.getItem("user");
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+    <nav className="navbar navbar-expand-lg navbar-light bg-light-theme border-bottom">
       <div className="container-fluid">
         <button
           className="navbar-toggler"
@@ -24,12 +24,15 @@ function Header() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ms-auto mt-2 mt-lg-0">
             <li className="nav-item active">
-              <a className="nav-link">
+              <a className="nav-link bg-light-theme">
                 Welcom <b>{user}!</b>
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link c-pointer" onClick={() => logout()}>
+              <a
+                className="nav-link c-pointer bg-light-theme"
+                onClick={() => logout()}
+              >
                 Logout
               </a>
             </li>

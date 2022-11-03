@@ -46,7 +46,14 @@ class EmployeeDetails extends Component {
   }
 
   fetchData() {
-    this.setState({ data: ApiService.getEmployees() });
+    ApiService.getEmployees().then( (response) => {
+      this.setState({ data: response.data.Employees });
+    
+    })
+    .catch( (error) => {
+      console.log(error);
+    })
+   
   }
   componentDidMount() {
     this.fetchData();
@@ -55,7 +62,7 @@ class EmployeeDetails extends Component {
   render() {
     return (
       <div className="container-fluid">
-        <h3 className="mt-4">Employee Details </h3>
+        <h3 className="mt-4 bg-light-theme-txt">Employee Details </h3>
 
         <DataTable
           columns={this.state.columns}

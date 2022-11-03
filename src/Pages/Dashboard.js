@@ -12,10 +12,20 @@ class Dashboard extends Component {
   }
 
   fetchData() {
-    this.setState({
-      employees: ApiService.getEmployeesCount(),
-      departments: ApiService.getDepartmemtsCount(),
-    });
+    ApiService.getEmployees().then( (response) => {
+      this.setState({ employees: response.data.Employees.length });
+    
+    })
+    .catch( (error) => {
+      console.log(error);
+    })
+    ApiService.getDepartmemts().then( (response) => {
+      this.setState({ departments: response.data.Department.length });
+    
+    })
+    .catch( (error) => {
+      console.log(error);
+    });      
   }
   componentDidMount() {
     this.fetchData();
@@ -23,7 +33,7 @@ class Dashboard extends Component {
   render() {
     return (
       <div className="container-fluid">
-        <h3 className="mt-4">Dashboard </h3>
+        <h3 className="mt-4 bg-light-theme-txt">Dashboard </h3>
 
         <div className="float-container">
           <div className="float-child">

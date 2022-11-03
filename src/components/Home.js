@@ -8,19 +8,19 @@ import Dashboard from "../Pages/Dashboard";
 import Movies from "../Pages/Movies";
 import "./styles.css";
 import Login from "../Pages/Login/Login";
+import ApiService from "../Services/ApiService";
 
 class Home extends Component {
+  data={};
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {data:{}};
     let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    console.log("ssdsdf=", isLoggedIn);
+    this.fetchData = this.Config.bind(this);
   }
 
   renderSwitch() {
-    console.log(this.props.nav);
-
     switch (this.props.nav) {
       case "employee":
         return <EmployeeDetails />;
@@ -32,20 +32,36 @@ class Home extends Component {
         return <Dashboard />;
     }
   }
+  componentDidMount() {
+    this.fetchData();
+  }
   render() {
     let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    console.log("lod=", isLoggedIn);
     return isLoggedIn ? (
       <div className="d-flex" id="wrapper">
-        <SideNav />
+        <SideNav data={this.state.data} />
         <div id="page-content-wrapper">
-          <Header />
+          <Header data={this.state.data} />
           {this.renderSwitch()}
         </div>
       </div>
     ) : (
       <Login />
     );
+  }
+  Config() {
+    //let config=ApiService.getConfig();
+    ApiService.getConfig()
+      .then((response) => {
+        let config = response.data;
+        this.data=config;
+        this.setState({ data: config });
+        document.querySelector("body").style.cssText =
+          "--theme-dark:" + config.theme;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 }
 

@@ -11,7 +11,6 @@ function Login() {
   let message = "";
   const onFormSubmit = (values) => {
     let cdata = ApiService.getCredentials();
-    console.log(cdata);
     localStorage.setItem("isLoggedIn", false);
     localStorage.setItem("user", null);
     if (

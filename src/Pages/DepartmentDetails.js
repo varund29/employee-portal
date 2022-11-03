@@ -27,7 +27,13 @@ class DepartmentDetails extends Component {
     this.fetchData = this.fetchData.bind(this);
   }
   fetchData() {
-    this.setState({ data: ApiService.getDepartmemts() });
+    ApiService.getDepartmemts().then( (response) => {
+      this.setState({ data: response.data.Department });
+    
+    })
+    .catch( (error) => {
+      console.log(error);
+    });   
   }
   componentDidMount() {
     this.fetchData();
@@ -36,7 +42,7 @@ class DepartmentDetails extends Component {
   render() {
     return (
       <div className="container-fluid">
-        <h3 className="mt-4">Department Details </h3>
+        <h3 className="mt-4 bg-light-theme-txt">Department Details </h3>
 
         <DataTable
           columns={this.state.columns}

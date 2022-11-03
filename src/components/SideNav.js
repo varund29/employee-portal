@@ -2,11 +2,12 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 class SideNav extends Component {
+
   render() {
     return (
       <div className="border-end bg-white" id="sidebar-wrapper">
-        <div className="sidebar-heading border-bottom bg-light">
-          Company Portal
+        <div className="sidebar-heading border-bottom bg-light-theme">
+       <img src={"./assets/img/logo.png"} title={this.props.data.title} className="mgr-10"></img>  
         </div>
         <div className="list-group list-group-flush">
           <Link
@@ -32,7 +33,7 @@ class SideNav extends Component {
             to="/home/movies"
             className="list-group-item list-group-item-action list-group-item-light p-3"
           >
-            Movies
+          Others
           </Link>
         </div>
       </div>
