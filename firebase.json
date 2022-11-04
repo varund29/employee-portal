@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "build",
-    "site":"tata-india",
+    "site":"reliance-india",
     "ignore": [
       "firebase.json",
       "**/.*",
