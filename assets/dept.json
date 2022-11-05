@@ -19,6 +19,26 @@
         {
             "DeptId": "105",
             "Name": "HELPDESK"
+        },
+         {
+            "DeptId": "106",
+            "Name": "IT"
+        },
+        {
+            "DeptId": "107",
+            "Name": "HR"
+        },
+        {
+            "DeptId": "108",
+            "Name": "ACCOUNTS"
+        },
+        {
+            "DeptId": "109",
+            "Name": "SECURITY"
+        },
+        {
+            "DeptId": "110",
+            "Name": "HELPDESK"
         }
     ]
 }
