@@ -58,6 +58,7 @@ class Home extends Component {
         this.setState({ data: config });
         document.querySelector("body").style.cssText =
           "--theme-dark:" + config.theme;
+          document.title = response.data.title;
       })
       .catch((error) => {
         console.log(error);

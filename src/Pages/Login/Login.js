@@ -13,6 +13,7 @@ function Login() {
    
     document.querySelector("body").style.cssText =
       "--theme-dark:" + response.data.theme;
+      document.title = response.data.title;
   })
   .catch((error) => {
     console.log(error);
