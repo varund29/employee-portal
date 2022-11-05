@@ -1,21 +1,30 @@
 import React, { useState } from "react";
 import { Form } from "antd";
 import "./Login.css";
-import { useNavigate, Redirect } from "react-router-dom";
 import ApiService from "../../Services/ApiService";
+
 
 function Login() {
   localStorage.setItem("isLoggedIn", false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  let message = "";
+  
+  ApiService.getConfig()
+  .then((response) => {
+   
+    document.querySelector("body").style.cssText =
+      "--theme-dark:" + response.data.theme;
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
   const onFormSubmit = (values) => {
     let cdata = ApiService.getCredentials();
     localStorage.setItem("isLoggedIn", false);
     localStorage.setItem("user", null);
     if (
-      values.username == cdata.username &&
-      values.password == cdata.password
+      values.username === cdata.username &&
+      values.password === cdata.password
     ) {
       localStorage.setItem("user", cdata.username);
       localStorage.setItem("isLoggedIn", true);
@@ -25,33 +34,7 @@ function Login() {
     } else {
       setError("Invalid Username/Password");
     }
-    /* 
-     const formData = new FormData();
-    formData.append("username", values.username);
-    formData.append("password", values.password);
-
-    const options = {
-      method: "POST",
-      body: formData,
-    };
-    try {
-      fetch("./credentials.json", options)
-        .then(function (res) {
-          return res.json();
-        })
-        .then(function (data) {
-          let resp = JSON.stringify(data);
-          console.log(resp);
-          if (
-            values.username == data.username &&
-            values.password == data.password
-          ) {
-            navigate("/home");
-          } else {
-            setError("Invalid Username/Password");
-          }
-        });
-    } catch {} */
+    
   };
   return (
     <div className="wrapper fadeInDown">

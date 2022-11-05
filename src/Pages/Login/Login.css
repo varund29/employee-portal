@@ -1,4 +1,6 @@
-
+:root {
+--theme-dark: var(--theme-dark);
+}
 a {
   color: #92badd;
   display:inline-block;
@@ -33,7 +35,7 @@ h2 {
 #formContent {
   -webkit-border-radius: 10px 10px 10px 10px;
   border-radius: 10px 10px 10px 10px;
-  background: #fff;
+  background: var(--theme-dark);
   padding: 30px;
   width: 90%;
   max-width: 450px;
