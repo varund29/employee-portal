@@ -1,0 +1,24 @@
+{
+    "Department": [
+        {
+            "DeptId": "101",
+            "Name": "IT"
+        },
+        {
+            "DeptId": "102",
+            "Name": "HR"
+        },
+        {
+            "DeptId": "103",
+            "Name": "ACCOUNTS"
+        },
+        {
+            "DeptId": "104",
+            "Name": "SECURITY"
+        },
+        {
+            "DeptId": "105",
+            "Name": "HELPDESK"
+        }
+    ]
+}
