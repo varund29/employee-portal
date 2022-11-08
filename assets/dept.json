@@ -39,6 +39,10 @@
         {
             "DeptId": "110",
             "Name": "HELPDESK"
+        },
+        {
+            "DeptId": "110",
+            "Name": "HELPDESK"
         }
     ]
 }
